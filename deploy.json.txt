@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "resources": [
+    {
+      "apiVersion": "2019-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "Contact_Database_application",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'myAppServicePlan')]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "DATABASE_CONNECTION_STRING",
+              "value": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', 'mySqlServer')).fullyQualifiedDomainName, ',1433;Initial Catalog=ContactDatabase;Persist Security Info=False;User ID=myDbUser;Password=myDbPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "webAppUrl": {
+      "type": "string",
+      "value": "[reference('Contact_Database_application').defaultHostName]"
+    }
+  }
+}
